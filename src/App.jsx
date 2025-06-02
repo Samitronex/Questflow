@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
@@ -38,13 +39,11 @@ function App() {
       ) : (
         <Route element={<MainLayout user={user} onLogout={() => setUser(null)} />}>
           <Route index           element={<Navigate to="profile" replace />} />
-          <Route path="profile"  element={<Profile       user={user} />} />
-          <Route
-            path="missions"
-            element={<MissionsBoard user={user} onRefreshUser={setUser} />}
-          />
-          <Route path="rewards"  element={<RewardsBoard  user={user} />} />
-          <Route path="rankings" element={<RankingsBoard user={user} />} />
+          <Route path="profile"  element={<Profile user={user}/>} />
+          <Route path="missions" element={<MissionsBoard user={user} />} />
+          <Route path="rewards"  element={<RewardsBoard user={user} />} />
+          <Route path="rankings" element={<RankingsBoard />} />
+
           <Route
             path="admin"
             element={
