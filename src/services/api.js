@@ -1,3 +1,4 @@
+// src/services/api.js
 import axios from 'axios'
 
 // 1) Instancia apuntando al backend
@@ -34,12 +35,11 @@ export async function authenticate({ username, password }) {
   return data
 }
 
-// Recuperar perfil (incluye moneda, XP actualizadas, etc.)
+// Recuperar perfil (incluye monedas, XP actualizadas, etc.)
 export async function fetchProfile() {
   const { data } = await API.get('/users/me')
   return data
 }
-
 
 /** — PLAYER FLOWS (ROLE_USER) — */
 
@@ -57,23 +57,29 @@ export async function completeMission({ missionId, description, attachment }) {
   await API.post(`/users/me/missions/${missionId}/complete`, form)
 }
 
-// Listar recompensas
+// Listar recompensas (para usuarios)
 export async function fetchRewards() {
   const { data } = await API.get('/rewards')
   return data
 }
 
 // Canjear recompensa
+// Simplificamos: sólo pasamos rewardId; backend lee Principal para saber quién canjea.
 export async function redeemReward(rewardId) {
   await API.post(`/rewards/${rewardId}/redeem`)
 }
 
-// Listar rankings
+// Listar ranking (público)
 export async function fetchRankings() {
   const { data } = await API.get('/rankings')
   return data
 }
 
+// Listar recompensas canjeadas (admin), pero ya agrupadas bajo AdminRewards
+export async function fetchRedeemedRewards() {
+  const { data } = await API.get('/admin/rewards/redeemed')
+  return data
+}
 
 /** — ADMIN FLOWS (ROLE_ADMIN) — */
 
@@ -89,7 +95,7 @@ export async function fetchAllMissions() {
   return data
 }
 
-// Crear una misión (título, difficulty, description, dueDate…)
+// Crear una misión (título, description, difficulty, dueDate…)
 export async function createMission(missionPayload) {
   const { data } = await API.post('/admin/missions', missionPayload)
   return data
@@ -128,5 +134,35 @@ export async function revokeMissionFromUser(userId, missionId) {
   await API.delete(`/admin/users/${userId}/missions/${missionId}`)
 }
 
-// Exporta el cliente por si necesitas llamadas genéricas
+/** — ADMIN REWARDS (ROLE_ADMIN) — */
+
+// 1) Listar todas las recompensas (administrador)
+export async function fetchAdminRewards() {
+  const { data } = await API.get('/admin/rewards')
+  return data
+}
+
+// 2) Crear nueva recompensa (admin)
+export async function createReward(rewardPayload) {
+  const { data } = await API.post('/admin/rewards', rewardPayload)
+  return data
+}
+
+// 3) Actualizar recompensa existente (admin)
+export async function updateReward(rewardId, rewardPayload) {
+  const { data } = await API.put(`/admin/rewards/${rewardId}`, rewardPayload)
+  return data
+}
+
+// 4) Borrar recompensa (admin)
+export async function deleteReward(rewardId) {
+  await API.delete(`/admin/rewards/${rewardId}`)
+}
+
+// 5) Listar todos los canjes de una recompensa específica (admin)
+export async function fetchRedeemedByReward(rewardId) {
+  const { data } = await API.get(`/admin/rewards/${rewardId}/redeemed`)
+  return data
+}
+
 export default API

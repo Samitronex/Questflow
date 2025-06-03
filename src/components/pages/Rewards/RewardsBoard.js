@@ -1,31 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import { fetchRewards, redeemReward } from '../../../services/api'
 
-export default function RewardsBoard({ user }) {
+export default function RewardsBoard({ user, onRefreshUser }) {
   const [rewards, setRewards] = useState([])
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchRewards(user.id).then(setRewards).catch(console.error)
-  }, [user.id])
+    fetchRewards()
+      .then(setRewards)
+      .catch(err => {
+        console.error("Error al cargar recompensas:", err)
+        setError('No se pudieron cargar las recompensas.')
+      })
+  }, [])
+
+  const handleRedeem = async (rewardId) => {
+    try {
+      await redeemReward(rewardId)
+      if (onRefreshUser) await onRefreshUser()
+
+      // > Aquí quitamos de la lista local la recompensa recién canjeada:
+      setRewards(current => current.filter(r => r.id !== rewardId))
+    } catch (e) {
+      console.error("Error al canjear recompensa:", e)
+      setError('No se pudo canjear la recompensa.')
+    }
+  }
 
   return (
-    <div>
-      <h1 className="text-3xl mb-4">Recompensas</h1>
+    <div className="w-full px-8 py-10">
+      <h1 className="text-4xl font-bold mb-6 text-center text-white">Recompensas</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <ul className="space-y-4">
         {rewards.map(r => (
-          <li key={r.id} className="flex justify-between bg-gray-700 p-4 rounded">
+          <li key={r.id} className="flex justify-between items-start bg-[#313a65] rounded-2xl p-6">
             <div>
-              <h2>{r.name}</h2>
-              <p>{r.description}</p>
-              <p>Precio: {r.coins_cost}</p>
+              <h2 className="text-xl font-semibold text-white">{r.name}</h2>
+              <p className="text-gray-300 mt-1">{r.description}</p>
+              <p className="text-gray-400 mt-2"><strong>Precio:</strong> {r.cost} monedas</p>
             </div>
             <button
-              onClick={()=>{
-                redeemReward(user.id, r.id)
-                  .then(()=>fetchRewards(user.id).then(setRewards))
-              }}
-              className="bg-blue-600 px-4 rounded"
-            >Canjear</button>
+              onClick={() => handleRedeem(r.id)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+            >
+              Canjear
+            </button>
           </li>
         ))}
       </ul>

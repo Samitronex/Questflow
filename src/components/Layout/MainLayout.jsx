@@ -1,8 +1,9 @@
-import React from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+// src/components/Layout/MainLayout.jsx
+import React from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 
 export default function MainLayout({ user, onLogout }) {
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -10,36 +11,44 @@ export default function MainLayout({ user, onLogout }) {
         <nav className="flex-1 flex justify-center space-x-12 text-lg">
           <NavLink to="profile" className={({isActive}) => isActive
             ? 'bg-gray-700 px-2 py-1 rounded'
-            : 'hover:bg-gray-700 px-2 py-1 rounded'
-          }>
+            : 'hover:bg-gray-700 px-2 py-1 rounded'}
+          >
             Perfil
           </NavLink>
           <NavLink to="missions" className={({isActive}) => isActive
             ? 'bg-gray-700 px-2 py-1 rounded'
-            : 'hover:bg-gray-700 px-2 py-1 rounded'
-          }>
+            : 'hover:bg-gray-700 px-2 py-1 rounded'}
+          >
             Misiones
           </NavLink>
           <NavLink to="rewards" className={({isActive}) => isActive
             ? 'bg-gray-700 px-2 py-1 rounded'
-            : 'hover:bg-gray-700 px-2 py-1 rounded'
-          }>
+            : 'hover:bg-gray-700 px-2 py-1 rounded'}
+          >
             Recompensas
           </NavLink>
           <NavLink to="rankings" className={({isActive}) => isActive
             ? 'bg-gray-700 px-2 py-1 rounded'
-            : 'hover:bg-gray-700 px-2 py-1 rounded'
-          }>
+            : 'hover:bg-gray-700 px-2 py-1 rounded'}
+          >
             Ranking
           </NavLink>
-          
+
           {user.role === 'ADMIN' && (
-            <NavLink to="admin" className={({isActive}) => isActive
-              ? 'bg-gray-700 px-2 py-1 rounded'
-              : 'hover:bg-gray-700 px-2 py-1 rounded'
-            }>
-              Admin
-            </NavLink>
+            <>
+              <NavLink to="admin" className={({isActive}) => isActive
+                ? 'bg-gray-700 px-2 py-1 rounded'
+                : 'hover:bg-gray-700 px-2 py-1 rounded'}
+              >
+                Admin Misiones
+              </NavLink>
+              <NavLink to="admin/rewards" className={({isActive}) => isActive
+                ? 'bg-gray-700 px-2 py-1 rounded'
+                : 'hover:bg-gray-700 px-2 py-1 rounded'}
+              >
+                Admin Recompensas
+              </NavLink>
+            </>
           )}
         </nav>
         <button
@@ -53,5 +62,5 @@ export default function MainLayout({ user, onLogout }) {
         <Outlet />
       </main>
     </div>
-  )
+  );
 }
